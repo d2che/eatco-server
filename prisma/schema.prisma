@@ -12,19 +12,4 @@ datasource db {
 }
 
 // 3. 데이터 모델(Model) 정의
-// 이곳에 테이블 구조를 정의합니다. 'User' 모델을 예시로 작성했습니다.
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String? // 물음표(?)는 'null'일 수 있는 선택적 필드를 의미
-  posts Post[]  // User와 Post 모델 간의 관계를 정의 (한 명의 유저는 여러 개의 게시글을 가질 수 있음)
-}
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-}
+// 이곳에 테이블 구조를 정의합니다. 

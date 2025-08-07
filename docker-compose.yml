@@ -1,17 +1,35 @@
 services:
-  # PostgreSQL 데이터베이스 서비스 정의
-  postgres-db:
-    image: postgres:15-alpine # 사용할 PostgreSQL 이미지
+  eatco-api:
+    build: .
+    container_name: eatco-api
+    ports:
+      - '3000:3000'
+    depends_on:
+      # eatco-db가 healthy 상태가 될 때까지 기다리도록 수정
+      eatco-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: 'postgresql://user:1234@eatco-db:5432/eatco_db'
+
+  eatco-db:
+    image: postgres:15-alpine
     container_name: eatco-db
-    restart: always # 컨테이너가 중지되면 항상 다시 시작
+    restart: always
+    # --- healthcheck 설정 추가 ---
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U user -d eatco_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # ---------------------------
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: eatco_db
     ports:
-      - '5432:5432' # 로컬 PC의 5432 포트와 컨테이너의 5432 포트를 연결
+      - '5432:5432'
     volumes:
-      - postgres-data:/var/lib/postgresql/data # 데이터 영속성을 위해 볼륨 연결
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data: # 명명된 볼륨 정의
+  postgres-data:
