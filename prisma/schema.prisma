@@ -1,0 +1,30 @@
+// 1. Prisma Client 생성기 설정
+// 이 스키마 파일을 바탕으로 Node.js 환경에서 사용할 Prisma Client를 생성하라고 지시합니다.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. 데이터 소스(Database) 설정
+// 어떤 종류의 데이터베이스에 연결할지 정의합니다.
+datasource db {
+  provider = "postgresql" // 데이터베이스 종류 (PostgreSQL)
+  url      = env("DATABASE_URL") // 연결 주소. .env 파일의 DATABASE_URL 값을 사용
+}
+
+// 3. 데이터 모델(Model) 정의
+// 이곳에 테이블 구조를 정의합니다. 'User' 모델을 예시로 작성했습니다.
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String? // 물음표(?)는 'null'일 수 있는 선택적 필드를 의미
+  posts Post[]  // User와 Post 모델 간의 관계를 정의 (한 명의 유저는 여러 개의 게시글을 가질 수 있음)
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}

@@ -1,0 +1,12 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# 최상위 EditorConfig 파일임을 명시
+root = true
+
+[*] # 모든 파일에 아래 규칙을 적용
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf # <-- 핵심! 라인 엔딩을 LF로 강제합니다.
+insert_final_newline = true # 파일 마지막에 빈 줄을 추가합니다.
+trim_trailing_whitespace = true # 줄 끝에 있는 불필요한 공백을 제거합니다.
