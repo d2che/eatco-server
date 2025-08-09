@@ -1,31 +1,46 @@
-// 1. Prisma Client 생성기 설정
-// 이 스키마 파일을 바탕으로 Node.js 환경에서 사용할 Prisma Client를 생성하라고 지시합니다.
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
 
-// 2. 데이터 소스(Database) 설정
-// 어떤 종류의 데이터베이스에 연결할지 정의합니다.
 datasource db {
-  provider = "postgresql" // 데이터베이스 종류 (PostgreSQL)
-  url      = env("DATABASE_URL") // 연결 주소. .env 파일의 DATABASE_URL 값을 사용
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// 3. 데이터 모델(Model) 정의
-// 브랜드 모델
 model Brand {
-  id    Int    @id @default(autoincrement())
-  name  String @unique // 브랜드 이름 (예: "BHC", "교촌치킨")
-  menus Menu[] // 이 브랜드에 속한 메뉴들
+  id                Int      @id @default(autoincrement())
+  name              String   @unique
+  logoUrl           String
+  cheapestMenuPrice Int
+  maxDiscount       Int
+  isPopular         Boolean  @default(false) // '인기 브랜드' 구분을 위함
+  isLowCost         Boolean  @default(false) // '저가 브랜드' 구분을 위함
+  menus             Menu[]
 }
 
-// 메뉴 모델
 model Menu {
-  id      Int    @id @default(autoincrement())
-  name    String // 메뉴 이름 (예: "뿌링클", "허니콤보")
-  price   Int
-  
-  // Brand 모델과의 관계 설정 (1:N)
-  brand   Brand  @relation(fields: [brandId], references: [id])
-  brandId Int
+  id            Int      @id @default(autoincrement())
+  name          String
+  imageUrl      String
+  officialPrice Int
+  isPopular     Boolean  @default(false) // '인기 메뉴' 구분을 위함
+
+  brand         Brand    @relation(fields: [brandId], references: [id])
+  brandId       Int
+  prices        AppPrice[]
+
+  @@unique([brandId, name])
+}
+
+model AppPrice {
+  id           Int     @id @default(autoincrement())
+  appName      String  // 예: "배달의민족"
+  appLogoUrl   String
+  price        Int
+  discountInfo String?
+
+  menu         Menu    @relation(fields: [menuId], references: [id])
+  menuId       Int
 }
