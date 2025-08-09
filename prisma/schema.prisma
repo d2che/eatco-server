@@ -12,4 +12,20 @@ datasource db {
 }
 
 // 3. 데이터 모델(Model) 정의
-// 이곳에 테이블 구조를 정의합니다. 
+// 브랜드 모델
+model Brand {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // 브랜드 이름 (예: "BHC", "교촌치킨")
+  menus Menu[] // 이 브랜드에 속한 메뉴들
+}
+
+// 메뉴 모델
+model Menu {
+  id      Int    @id @default(autoincrement())
+  name    String // 메뉴 이름 (예: "뿌링클", "허니콤보")
+  price   Int
+  
+  // Brand 모델과의 관계 설정 (1:N)
+  brand   Brand  @relation(fields: [brandId], references: [id])
+  brandId Int
+}
