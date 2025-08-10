@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSearchDto } from './dto/create-search.dto';
-import { UpdateSearchDto } from './dto/update-search.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SearchService {
-  create(createSearchDto: CreateSearchDto) {
-    return 'This action adds a new search';
-  }
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all search`;
-  }
+  async searchBrands(query: string) {
+    const brands = await this.prisma.brand.findMany({
+      where: {
+        name: {
+          contains: query, // 'name' 필드에 'query'가 포함된 브랜드를 찾습니다.
+        },
+      },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} search`;
-  }
+    // openapi.yaml 명세서에 따라 첫 번째 결과를 primaryResult로, 나머지를 recommendations로 분리합니다.
+    const primaryResult = brands.length > 0 ? brands[0] : null;
+    const recommendations = brands.length > 1 ? brands.slice(1) : [];
 
-  update(id: number, updateSearchDto: UpdateSearchDto) {
-    return `This action updates a #${id} search`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} search`;
+    return {
+      primaryResult,
+      recommendations,
+    };
   }
 }
