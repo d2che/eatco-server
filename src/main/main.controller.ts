@@ -1,34 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MainService } from './main.service';
-import { CreateMainDto } from './dto/create-main.dto';
-import { UpdateMainDto } from './dto/update-main.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Main')
 @Controller('main')
 export class MainController {
   constructor(private readonly mainService: MainService) {}
 
-  @Post()
-  create(@Body() createMainDto: CreateMainDto) {
-    return this.mainService.create(createMainDto);
-  }
-
   @Get()
-  findAll() {
-    return this.mainService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mainService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMainDto: UpdateMainDto) {
-    return this.mainService.update(+id, updateMainDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mainService.remove(+id);
+  @ApiOperation({ summary: '메인 페이지 데이터 조회' })
+  getMainPageData() {
+    return this.mainService.getMainPageData();
   }
 }

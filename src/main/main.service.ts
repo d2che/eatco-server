@@ -1,26 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMainDto } from './dto/create-main.dto';
-import { UpdateMainDto } from './dto/update-main.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MainService {
-  create(createMainDto: CreateMainDto) {
-    return 'This action adds a new main';
-  }
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all main`;
-  }
+  async getMainPageData() {
+    // 1. 인기 메뉴 7개 조회 (연관된 브랜드와 앱별 가격 정보 포함)
+    const popularMenus = await this.prisma.menu.findMany({
+      where: { isPopular: true },
+      take: 7,
+      include: {
+        brand: true, // 메뉴에 속한 브랜드 정보
+        prices: {
+          // 메뉴에 속한 앱별 가격 정보
+          orderBy: {
+            price: 'asc', // 가격이 낮은 순으로 정렬
+          },
+          take: 3, // 상위 3개만 가져오기
+        },
+      },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} main`;
-  }
+    // 2. 인기 브랜드 7개 조회
+    const popularBrands = await this.prisma.brand.findMany({
+      where: { isPopular: true },
+      take: 7,
+    });
 
-  update(id: number, updateMainDto: UpdateMainDto) {
-    return `This action updates a #${id} main`;
-  }
+    // 3. 저가 브랜드 7개 조회
+    const lowCostBrands = await this.prisma.brand.findMany({
+      where: { isLowCost: true },
+      take: 7,
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} main`;
+    return {
+      popularMenus,
+      popularBrands,
+      lowCostBrands,
+    };
   }
 }
