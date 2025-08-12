@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Eatco API 테스트</title>
+</head>
+<body>
+    <h1>Eatco API 연동 테스트 페이지</h1>
+    <p>F12를 눌러 개발자 도구의 콘솔을 확인하세요.</p>
+
+    <script>
+        // 백엔드 서버의 /main API에 GET 요청을 보냅니다.
+        fetch('http://localhost:3000/main')
+            .then(response => response.json()) // 응답을 JSON 형태로 변환
+            .then(data => {
+                console.log('✅ API 호출 성공:', data); // 성공 시 데이터를 콘솔에 출력
+            })
+            .catch(error => {
+                console.error('❌ API 호출 실패:', error); // 실패 시 에러를 콘솔에 출력
+            });
+    </script>
+</body>
+</html>

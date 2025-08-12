@@ -6,6 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors(); // 모든 출처의 요청을 허용하도록 설정합니다. 흠 이게맞아?
+
   // Swagger 문서 설정
   const config = new DocumentBuilder()
     .setTitle('Eatco API')
