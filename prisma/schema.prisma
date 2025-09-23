@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,37 +8,35 @@ datasource db {
 }
 
 model Brand {
-  id                Int      @id @default(autoincrement())
-  name              String   @unique
-  logoUrl           String
+  id                Int     @id @default(autoincrement())
+  name              String  @unique
   cheapestMenuPrice Int
+  isLowCost         Boolean @default(false)
+  isPopular         Boolean @default(false)
+  logoUrl           String
   maxDiscount       Int
-  isPopular         Boolean  @default(false) // '인기 브랜드' 구분을 위함
-  isLowCost         Boolean  @default(false) // '저가 브랜드' 구분을 위함
   menus             Menu[]
 }
 
 model Menu {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   name          String
-  imageUrl      String
-  officialPrice Int
-  isPopular     Boolean  @default(false) // '인기 메뉴' 구분을 위함
-
-  brand         Brand    @relation(fields: [brandId], references: [id])
   brandId       Int
+  imageUrl      String
+  isPopular     Boolean    @default(false)
+  officialPrice Int
   prices        AppPrice[]
+  brand         Brand      @relation(fields: [brandId], references: [id])
 
   @@unique([brandId, name])
 }
 
 model AppPrice {
   id           Int     @id @default(autoincrement())
-  appName      String  // 예: "배달의민족"
+  appName      String
   appLogoUrl   String
   price        Int
   discountInfo String?
-
-  menu         Menu    @relation(fields: [menuId], references: [id])
   menuId       Int
+  menu         Menu    @relation(fields: [menuId], references: [id])
 }

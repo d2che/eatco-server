@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
@@ -19,6 +20,7 @@ export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
+  @ApiOperation({ summary: '새 브랜드 생성' })
   create(@Body() createBrandDto: CreateBrandDto) {
     return this.brandsService.create(createBrandDto);
   }
@@ -36,23 +38,28 @@ export class BrandsController {
 
   @Get(':id/menus')
   @ApiOperation({ summary: '특정 브랜드의 메뉴 목록 조회' })
-  findMenusByBrand(@Param('id') id: string) {
-    return this.brandsService.findMenusByBrand(+id);
+  findMenusByBrand(@Param('id', ParseIntPipe) id: number) {
+    return this.brandsService.findMenusByBrand(id);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: '특정 브랜드 정보 조회' }) // <-- Swagger 설명을 추가했습니다.
-  findOne(@Param('id') id: string) {
-    return this.brandsService.findOne(+id); // <-- 이제 이 코드가 정상 작동합니다.
+  @ApiOperation({ summary: '특정 브랜드 정보 조회' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.brandsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
-    return this.brandsService.update(+id, updateBrandDto);
+  @ApiOperation({ summary: '브랜드 정보 수정' })
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBrandDto: UpdateBrandDto,
+  ) {
+    return this.brandsService.update(id, updateBrandDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.brandsService.remove(+id);
+  @ApiOperation({ summary: '브랜드 삭제' })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.brandsService.remove(id);
   }
 }

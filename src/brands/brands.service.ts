@@ -8,7 +8,9 @@ export class BrandsService {
   constructor(private prisma: PrismaService) {}
 
   create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+    return this.prisma.brand.create({
+      data: createBrandDto,
+    });
   }
 
   findAll(category: 'popular' | 'low-cost') {
@@ -21,25 +23,32 @@ export class BrandsService {
     return [];
   }
 
-  // ▼▼▼▼▼ 이 findOne 함수가 다시 추가되었습니다! ▼▼▼▼▼
   findOne(id: number) {
     return this.prisma.brand.findUnique({
       where: { id },
     });
   }
-  // ▲▲▲▲▲ 여기까지 ▲▲▲▲▲
 
   findMenusByBrand(id: number) {
     return this.prisma.menu.findMany({
-      where: { brandId: id },
+      where: {
+        brandId: {
+          equals: id, // 'id와 같은(equals) brandId를 찾아줘' 라고 더 명확하게 지정합니다.
+        },
+      },
     });
   }
 
   update(id: number, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
+    return this.prisma.brand.update({
+      where: { id },
+      data: updateBrandDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} brand`;
+    return this.prisma.brand.delete({
+      where: { id },
+    });
   }
 }
