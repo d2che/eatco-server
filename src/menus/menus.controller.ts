@@ -1,3 +1,5 @@
+// src/menus/menus.controller.ts
+
 import {
   Controller,
   Get,
@@ -6,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe, // 👈 ParseIntPipe를 import 합니다.
 } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
@@ -27,20 +30,24 @@ export class MenusController {
     return this.menusService.findAll();
   }
 
-  @Get(':id/prices') // <-- URL 경로를 명세서에 맞게 수정
+  // 👇 여기가 핵심! findOneWithPrices 함수를 사용하도록 수정합니다.
+  @Get(':id/prices')
   @ApiOperation({ summary: '특정 메뉴의 가격 비교 정보 조회' })
-  findOne(@Param('id') id: string) {
-    // URL로 받은 id는 문자열이므로, +를 붙여 숫자로 변환합니다.
-    return this.menusService.findOneWithPrices(+id);
+  findOneWithPrices(@Param('id', ParseIntPipe) id: number) {
+    // 💡 URL로 받은 id를 안전하게 숫자로 변환하여 서비스에 전달합니다.
+    return this.menusService.findOneWithPrices(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
-    return this.menusService.update(+id, updateMenuDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateMenuDto: UpdateMenuDto,
+  ) {
+    return this.menusService.update(id, updateMenuDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.menusService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.menusService.remove(id);
   }
 }
