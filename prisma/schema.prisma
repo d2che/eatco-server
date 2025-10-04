@@ -41,3 +41,11 @@ model AppPrice {
   menuId       Int
   menu         Menu    @relation(fields: [menuId], references: [id])
 }
+
+model ClickLog {
+  id           Int      @id @default(autoincrement())
+  menuName     String
+  brandName    String
+  platformName String
+  clickedAt    DateTime @default(now()) // 클릭된 시간 자동 기록
+}
