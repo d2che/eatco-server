@@ -6,8 +6,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors(); // 모든 출처의 요청을 허용하도록 설정합니다. 흠 이게맞아?
-
+  // app.enableCors(); // 모든 출처의 요청을 허용하도록 설정합니다. 흠 이게맞아?
+  app.enableCors({
+    // origin 배열에 허용할 주소를 모두 적어줍니다.
+    origin: [
+      'http://localhost:5173', // 로컬 프론트엔드 개발 서버 주소
+      // 'https://<나중에-배포할-Vercel-주소>.vercel.app' // 나중에 Vercel 배포 후 주소를 추가하면 됩니다.
+    ],
+    credentials: true, // 쿠키 등을 주고받을 때 필요한 설정
+  });
   // Swagger 문서 설정
   const config = new DocumentBuilder()
     .setTitle('Eatco API')
